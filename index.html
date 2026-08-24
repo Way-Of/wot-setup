@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WayOfTeams Installer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --color-bg: #1A1A1A;
+      --color-surface: #222222;
+      --color-surface-elevated: #2A2A2A;
+      --color-border: #333333;
+      --color-border-strong: #444444;
+      --color-text-primary: #FFFFFF;
+      --color-text-secondary: #AAAAAA;
+      --color-text-muted: #666666;
+      --color-primary: #FF6B35;
+      --color-primary-hover: #e85a2a;
+      --color-success: #22C55E;
+      --color-warning: #F59E0B;
+      --color-info: #3B82F6;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Geist', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--color-bg);
+      color: var(--color-text-primary);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .installer {
+      width: 520px;
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    }
+
+    .installer-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 20px 28px;
+      border-bottom: 1px solid var(--color-border);
+      background: var(--color-surface-elevated);
+    }
+
+    .installer-logo {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: var(--color-primary);
+      color: #fff;
+      font-weight: 800;
+      font-size: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .installer-title {
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    .installer-version {
+      font-size: 12px;
+      color: var(--color-text-muted);
+      font-family: 'Geist Mono', monospace;
+    }
+
+    .installer-body {
+      padding: 32px 28px;
+      min-height: 360px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .step { display: none; flex-direction: column; flex: 1; }
+    .step.active { display: flex; }
+
+    .step-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      background: color-mix(in srgb, var(--color-primary) 12%, transparent);
+      color: var(--color-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+      font-size: 22px;
+    }
+
+    .step-title {
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      margin-bottom: 8px;
+    }
+
+    .step-subtitle {
+      font-size: 14px;
+      color: var(--color-text-secondary);
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+
+    .requirements {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 24px;
+    }
+
+    .req-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 13px;
+      color: var(--color-text-secondary);
+    }
+
+    .req-icon {
+      width: 20px;
+      height: 20px;
+      border-radius: 6px;
+      background: color-mix(in srgb, var(--color-success) 12%, transparent);
+      color: var(--color-success);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      flex-shrink: 0;
+    }
+
+    .license-box {
+      flex: 1;
+      background: var(--color-bg);
+      border: 1px solid var(--color-border);
+      border-radius: 10px;
+      padding: 16px;
+      overflow-y: auto;
+      max-height: 200px;
+      font-size: 12px;
+      line-height: 1.7;
+      color: var(--color-text-secondary);
+      margin-bottom: 16px;
+    }
+
+    .checkbox-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 13px;
+      color: var(--color-text-secondary);
+      cursor: pointer;
+      margin-bottom: 12px;
+    }
+
+    .checkbox-row input[type="checkbox"] {
+      accent-color: var(--color-primary);
+      width: 16px;
+      height: 16px;
+    }
+
+    .location-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .location-input {
+      flex: 1;
+      height: 40px;
+      padding: 0 14px;
+      border-radius: 8px;
+      border: 1px solid var(--color-border-strong);
+      background: var(--color-bg);
+      color: var(--color-text-primary);
+      font-size: 13px;
+      font-family: 'Geist Mono', monospace;
+      outline: none;
+    }
+
+    .location-input:focus {
+      border-color: var(--color-primary);
+      box-shadow: 0 0 0 1px var(--color-primary);
+    }
+
+    .btn-browse {
+      height: 40px;
+      padding: 0 16px;
+      border-radius: 8px;
+      border: 1px solid var(--color-border-strong);
+      background: var(--color-surface-elevated);
+      color: var(--color-text-secondary);
+      font-size: 13px;
+      font-family: 'Geist', sans-serif;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .btn-browse:hover {
+      border-color: var(--color-primary);
+      color: var(--color-primary);
+    }
+
+    .space-info {
+      font-size: 12px;
+      color: var(--color-text-muted);
+      margin-bottom: 20px;
+    }
+
+    .space-info strong {
+      color: var(--color-text-secondary);
+    }
+
+    .components-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+
+    .component-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 14px;
+      background: var(--color-bg);
+      border: 1px solid var(--color-border);
+      border-radius: 8px;
+      font-size: 13px;
+      color: var(--color-text-secondary);
+    }
+
+    .component-row input[type="checkbox"] {
+      accent-color: var(--color-primary);
+      width: 16px;
+      height: 16px;
+    }
+
+    .component-row.required {
+      opacity: 0.7;
+    }
+
+    .component-row .size {
+      margin-left: auto;
+      font-family: 'Geist Mono', monospace;
+      font-size: 11px;
+      color: var(--color-text-muted);
+    }
+
+    .progress-section {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 20px;
+    }
+
+    .progress-bar-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .progress-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      color: var(--color-text-muted);
+    }
+
+    .progress-label .pct {
+      font-family: 'Geist Mono', monospace;
+      color: var(--color-text-secondary);
+    }
+
+    .progress-track {
+      height: 6px;
+      background: var(--color-bg);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: var(--color-primary);
+      border-radius: 999px;
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+
+    .progress-fill.success {
+      background: var(--color-success);
+    }
+
+    .progress-status {
+      font-size: 12px;
+      color: var(--color-text-muted);
+      text-align: center;
+      margin-top: 8px;
+    }
+
+    .complete-icon {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: color-mix(in srgb, var(--color-success) 12%, transparent);
+      color: var(--color-success);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      margin: 0 auto 20px;
+    }
+
+    .complete-title {
+      font-size: 22px;
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 8px;
+    }
+
+    .complete-subtitle {
+      font-size: 14px;
+      color: var(--color-text-secondary);
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    .installer-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 28px;
+      border-top: 1px solid var(--color-border);
+      background: var(--color-surface-elevated);
+    }
+
+    .step-indicator {
+      display: flex;
+      gap: 6px;
+    }
+
+    .step-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--color-border-strong);
+      transition: all 0.2s;
+    }
+
+    .step-dot.active {
+      background: var(--color-primary);
+    }
+
+    .step-dot.done {
+      background: var(--color-success);
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 0 20px;
+      height: 38px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      font-family: 'Geist', sans-serif;
+      transition: all 0.15s;
+    }
+
+    .btn-primary {
+      background: var(--color-primary);
+      color: #fff;
+    }
+
+    .btn-primary:hover {
+      background: var(--color-primary-hover);
+    }
+
+    .btn-primary:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--color-text-secondary);
+      border: 1px solid transparent;
+    }
+
+    .btn-ghost:hover {
+      background: var(--color-surface-elevated);
+      color: var(--color-text-primary);
+    }
+
+    .btn-success {
+      background: var(--color-success);
+      color: #fff;
+    }
+
+    .btn-success:hover {
+      background: #16a34a;
+    }
+
+    .footer-buttons {
+      display: flex;
+      gap: 8px;
+    }
+
+    .os-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 6px;
+      background: color-mix(in srgb, var(--color-info) 12%, transparent);
+      color: var(--color-info);
+      font-size: 11px;
+      font-weight: 600;
+      margin-bottom: 16px;
+    }
+  </style>
+</head>
+<body>
+  <div class="installer">
+    <div class="installer-header">
+      <div class="installer-logo">W</div>
+      <div>
+        <div class="installer-title">WayOfTeams Installer</div>
+        <div class="installer-version">v1.0.0</div>
+      </div>
+    </div>
+
+    <div class="installer-body">
+      <!-- Step 1: Welcome -->
+      <div class="step active" id="step-1">
+        <div class="step-icon">👋</div>
+        <div class="step-title">Welcome</div>
+        <div class="step-subtitle">
+          This wizard will guide you through the installation of WayOfTeams on your computer.
+        </div>
+        <div class="os-badge" id="os-badge">Detecting OS...</div>
+        <div class="requirements">
+          <div class="req-item"><div class="req-icon">✓</div> <span id="req-os">Windows 10+ / macOS 12+ / Linux</span></div>
+          <div class="req-item"><div class="req-icon">✓</div> 8GB RAM recommended (4GB minimum)</div>
+          <div class="req-item"><div class="req-icon">✓</div> 2GB disk space recommended (1GB required)</div>
+          <div class="req-item"><div class="req-icon">✓</div> Internet connection for initial download</div>
+        </div>
+      </div>
+
+      <!-- Step 2: License Agreement -->
+      <div class="step" id="step-2">
+        <div class="step-icon">📜</div>
+        <div class="step-title">License Agreement</div>
+        <div class="step-subtitle">Please read and accept the terms of service.</div>
+        <div class="license-box">
+          <strong>WayOfTeams Terms of Service</strong><br><br>
+          1. LICENSE GRANT<br>
+          Subject to the terms of this Agreement, Way-Of grants you a non-exclusive, non-transferable license to install and use WayOfTeams Desktop on your personal computer.<br><br>
+          2. USE RESTRICTIONS<br>
+          You may not: (a) copy, modify, or distribute the Software; (b) reverse engineer, decompile, or disassemble the Software; (c) remove any proprietary notices or labels on the Software; (d) use the Software in any manner that violates applicable law.<br><br>
+          3. DATA COLLECTION<br>
+          WayOfTeams collects usage analytics and error reports to improve the product. You may opt out at any time. Your code and data remain on your device unless you explicitly enable cloud sync.<br><br>
+          4. AI FEATURES<br>
+          WayOfTeams integrates with local AI models (LM Studio, Ollama) and optional cloud AI providers (OpenAI, Anthropic). You are responsible for your own API keys and usage costs.<br><br>
+          5. DISCLAIMER<br>
+          THE SOFTWARE IS PROVIDED "AS IS" WITHOUT WARRANTY OF ANY KIND. IN NO EVENT SHALL WAY-OF BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER LIABILITY.<br><br>
+          6. TERMINATION<br>
+          This Agreement is effective until terminated. Way-Of may terminate this Agreement at any time if you fail to comply with any term.<br><br>
+          Copyright © 2026 Way-Of. All rights reserved.
+        </div>
+        <label class="checkbox-row">
+          <input type="checkbox" id="accept-license">
+          I accept the terms of the agreement
+        </label>
+      </div>
+
+      <!-- Step 3: Install Location -->
+      <div class="step" id="step-3">
+        <div class="step-icon">📁</div>
+        <div class="step-title">Install Location</div>
+        <div class="step-subtitle">Choose where to install WayOfTeams.</div>
+        <div class="location-row">
+          <input type="text" class="location-input" id="install-path" value="">
+          <button class="btn-browse" onclick="browsePath()">Browse</button>
+        </div>
+        <div class="space-info">
+          Required: <strong>1 GB</strong> &nbsp;|&nbsp; Available: <strong id="available-space">45.2 GB</strong>
+        </div>
+      </div>
+
+      <!-- Step 4: Components -->
+      <div class="step" id="step-4">
+        <div class="step-icon">📦</div>
+        <div class="step-title">Choose Components</div>
+        <div class="step-subtitle">Select which components to install.</div>
+        <div class="components-list">
+          <label class="component-row required">
+            <input type="checkbox" checked disabled>
+            <span>WayOfTeams Core</span>
+            <span class="size">~150MB</span>
+          </label>
+          <label class="component-row">
+            <input type="checkbox" checked id="comp-ai">
+            <span>Local AI Support (LM Studio / Ollama)</span>
+            <span class="size">~30MB</span>
+          </label>
+          <label class="component-row">
+            <input type="checkbox" checked id="comp-anchor">
+            <span>Anchor Memory</span>
+            <span class="size">~50MB</span>
+          </label>
+          <label class="component-row">
+            <input type="checkbox" checked id="comp-openchamber">
+            <span>OpenChamber Workspace</span>
+            <span class="size">~80MB</span>
+          </label>
+          <label class="component-row">
+            <input type="checkbox" checked id="comp-shortcut">
+            <span>Desktop Shortcut</span>
+            <span class="size"></span>
+          </label>
+          <label class="component-row">
+            <input type="checkbox" id="comp-startup">
+            <span>Launch at startup</span>
+            <span class="size"></span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Step 5: Download & Install -->
+      <div class="step" id="step-5">
+        <div class="step-icon">⬇️</div>
+        <div class="step-title">Installing WayOfTeams</div>
+        <div class="step-subtitle">Please wait while we download and install the components.</div>
+        <div class="progress-section">
+          <div class="progress-bar-group">
+            <div class="progress-label"><span>Downloading</span><span class="pct" id="dl-pct">0%</span></div>
+            <div class="progress-track"><div class="progress-fill" id="dl-bar"></div></div>
+          </div>
+          <div class="progress-bar-group">
+            <div class="progress-label"><span>Extracting</span><span class="pct" id="ex-pct">0%</span></div>
+            <div class="progress-track"><div class="progress-fill" id="ex-bar"></div></div>
+          </div>
+          <div class="progress-bar-group">
+            <div class="progress-label"><span>Installing</span><span class="pct" id="in-pct">0%</span></div>
+            <div class="progress-track"><div class="progress-fill" id="in-bar"></div></div>
+          </div>
+          <div class="progress-status" id="progress-status">Preparing download...</div>
+        </div>
+      </div>
+
+      <!-- Step 6: Complete -->
+      <div class="step" id="step-6">
+        <div class="complete-icon">✓</div>
+        <div class="complete-title">Installation Complete!</div>
+        <div class="complete-subtitle">
+          WayOfTeams has been installed on your computer.<br>
+          You can now launch it from your desktop or start menu.
+        </div>
+        <label class="checkbox-row" style="justify-content: center;">
+          <input type="checkbox" checked id="launch-after">
+          Launch WayOfTeams
+        </label>
+      </div>
+    </div>
+
+    <div class="installer-footer">
+      <div class="step-indicator">
+        <div class="step-dot active" data-step="1"></div>
+        <div class="step-dot" data-step="2"></div>
+        <div class="step-dot" data-step="3"></div>
+        <div class="step-dot" data-step="4"></div>
+        <div class="step-dot" data-step="5"></div>
+        <div class="step-dot" data-step="6"></div>
+      </div>
+      <div class="footer-buttons">
+        <button class="btn btn-ghost" id="btn-back" onclick="prevStep()" style="display:none;">← Back</button>
+        <button class="btn btn-primary" id="btn-next" onclick="nextStep()">Next →</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let currentStep = 1;
+    const totalSteps = 6;
+
+    // Detect OS
+    const ua = navigator.userAgent;
+    let os = 'linux';
+    if (ua.includes('Win')) os = 'windows';
+    else if (ua.includes('Mac')) os = 'macos';
+
+    const osNames = { windows: 'Windows', macos: 'macOS', linux: 'Linux' };
+    const defaultPaths = {
+      windows: 'C:\\Program Files\\WayOfTeams',
+      macos: '/Applications/WayOfTeams',
+      linux: '/opt/wayofteams'
+    };
+
+    document.getElementById('os-badge').textContent = `Installing for ${osNames[os]}`;
+    document.getElementById('req-os').textContent =
+      os === 'windows' ? 'Windows 10 (build 1903+) or Windows 11' :
+      os === 'macos' ? 'macOS 12 (Monterey) or later' :
+      'Ubuntu 20.04+, Debian 11+, Fedora 36+';
+    document.getElementById('install-path').value = defaultPaths[os];
+
+    function updateDots() {
+      document.querySelectorAll('.step-dot').forEach(dot => {
+        const s = parseInt(dot.dataset.step);
+        dot.classList.toggle('active', s === currentStep);
+        dot.classList.toggle('done', s < currentStep);
+      });
+    }
+
+    function showStep(n) {
+      document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+      document.getElementById(`step-${n}`).classList.add('active');
+      document.getElementById('btn-back').style.display = n === 1 ? 'none' : 'inline-flex';
+      document.getElementById('btn-next').textContent = n === totalSteps ? 'Finish' : 'Next →';
+      if (n === totalSteps) {
+        document.getElementById('btn-next').className = 'btn btn-success';
+      } else {
+        document.getElementById('btn-next').className = 'btn btn-primary';
+      }
+      if (n === 5) {
+        document.getElementById('btn-next').style.display = 'none';
+        document.getElementById('btn-back').style.display = 'none';
+        startInstall();
+      } else {
+        document.getElementById('btn-next').style.display = 'inline-flex';
+      }
+      updateDots();
+    }
+
+    function nextStep() {
+      if (currentStep === 2 && !document.getElementById('accept-license').checked) {
+        alert('Please accept the license agreement to continue.');
+        return;
+      }
+      if (currentStep < totalSteps) {
+        currentStep++;
+        showStep(currentStep);
+      } else {
+        // Finish - launch app
+        if (document.getElementById('launch-after').checked) {
+          alert('Launching WayOfTeams...');
+        }
+        window.close();
+      }
+    }
+
+    function prevStep() {
+      if (currentStep > 1) {
+        currentStep--;
+        showStep(currentStep);
+      }
+    }
+
+    function startInstall() {
+      const components = [];
+      if (document.getElementById('comp-ai').checked) components.push('Local AI Support');
+      if (document.getElementById('comp-anchor').checked) components.push('Anchor Memory');
+      if (document.getElementById('comp-openchamber').checked) components.push('OpenChamber Workspace');
+
+      let step = 0;
+      const phases = ['download', 'extract', 'install'];
+      const phaseLabels = {
+        download: 'Downloading',
+        extract: 'Extracting',
+        install: 'Installing'
+      };
+
+      function tick() {
+        if (step >= phases.length * 100) {
+          document.getElementById('progress-status').textContent = 'Installation complete!';
+          document.querySelectorAll('.progress-fill').forEach(b => b.classList.add('success'));
+          setTimeout(() => { currentStep = 6; showStep(6); }, 800);
+          return;
+        }
+
+        const phaseIdx = Math.floor(step / 100);
+        const phaseStep = step % 100;
+        const phase = phases[phaseIdx];
+
+        const bar = document.getElementById(`${phase[0]}-bar`);
+        const pct = document.getElementById(`${phase[0]}-pct`);
+        bar.style.width = phaseStep + '%';
+        pct.textContent = phaseStep + '%';
+
+        const componentName = phaseIdx === 0 ?
+          (phaseStep < 30 ? 'Core application' :
+           phaseStep < 50 ? 'Anchor Memory' :
+           phaseStep < 70 ? 'OpenChamber' : 'AI Support') :
+          phaseIdx === 1 ?
+          (phaseStep < 40 ? 'Core files' :
+           phaseStep < 70 ? 'Sidecars' : 'Resources') :
+          (phaseStep < 30 ? 'Database' :
+           phaseStep < 60 ? 'Configuration' : 'Shortcuts');
+
+        document.getElementById('progress-status').textContent =
+          `${phaseLabels[phase]} ${componentName}...`;
+
+        step += 2;
+        setTimeout(tick, 60);
+      }
+
+      tick();
+    }
+
+    function browsePath() {
+      const path = prompt('Enter install location:', document.getElementById('install-path').value);
+      if (path) document.getElementById('install-path').value = path;
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,25 @@
+[package]
+name = "wayofteams-installer"
+version = "1.0.0"
+edition = "2021"
+description = "WayOfTeams Desktop Installer"
+authors = ["Way-Of"]
+license = "proprietary"
+repository = "https://github.com/Way-Of/wot-setup"
+
+[dependencies]
+tauri = { version = "2", features = ["tray-icon"] }
+tauri-plugin-shell = "2"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+reqwest = { version = "0.12", features = ["json", "stream"] }
+tokio = { version = "1", features = ["full"] }
+zip = "2"
+which = "7"
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[features]
+default = ["custom-protocol"]
+custom-protocol = ["tauri/custom-protocol"]
