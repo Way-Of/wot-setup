@@ -2,7 +2,6 @@
 
 use serde::{Deserialize, Serialize};
 use std::sync::Mutex;
-use tauri::Manager;
 
 #[derive(Default, Serialize, Deserialize)]
 struct InstallerState {
@@ -47,7 +46,7 @@ fn get_release_url() -> String {
 
 #[tauri::command]
 async fn download_and_install(
-    state: tauri::State<'_, AppState>,
+    _state: tauri::State<'_, AppState>,
     install_path: String,
     components: Vec<String>,
 ) -> Result<String, String> {
