@@ -4550,6 +4550,7 @@ dependencies = [
 name = "wayofteams-installer"
 version = "1.0.0"
 dependencies = [
+ "futures-util",
  "reqwest 0.12.28",
  "serde",
  "serde_json",

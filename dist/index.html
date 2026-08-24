@@ -953,42 +953,50 @@
     }
 
     // ── Install ──
-    function startInstall() {
+    async function startInstall() {
       document.getElementById('install-ready').classList.add('hidden');
       document.getElementById('install-progress').classList.add('active');
 
-      let tick = 0;
-      const total = 300;
-      const phases = [
-        { bar: 'dl', label: 'Downloading', parts: ['Core application', 'Anchor Memory', 'OpenChamber', 'AI Support'] },
-        { bar: 'ex', label: 'Extracting', parts: ['Core files', 'Sidecars', 'Resources'] },
-        { bar: 'in', label: 'Installing', parts: ['Database', 'Configuration', 'Shortcuts'] }
-      ];
+      const installPath = document.getElementById('install-path').value;
+      const components = getSelectedComponents();
 
-      function step() {
-        if (tick >= total) {
-          document.getElementById('progress-status').textContent = 'Installation complete!';
-          document.querySelectorAll('.progress-fill').forEach(b => b.classList.add('success'));
-          setTimeout(() => { currentStep = 6; showStep(6); }, 1000);
-          return;
-        }
+      try {
+        // Call Rust backend
+        const result = await window.__TAURI__.core.invoke('download_and_install', {
+          installPath: installPath,
+          components: components
+        });
 
-        const phaseIdx = Math.floor(tick / 100);
-        const phaseTick = tick % 100;
-        const phase = phases[phaseIdx];
-
-        document.getElementById(phase.bar + '-bar').style.width = phaseTick + '%';
-        document.getElementById(phase.bar + '-pct').textContent = phaseTick + '%';
-
-        const partIdx = Math.min(Math.floor(phaseTick / (100 / phase.parts.length)), phase.parts.length - 1);
-        document.getElementById('progress-status').textContent =
-          phase.label + ' ' + phase.parts[partIdx] + '…';
-
-        tick += 1;
-        setTimeout(step, 40);
+        document.getElementById('progress-status').textContent = result;
+        document.querySelectorAll('.progress-fill').forEach(b => b.classList.add('success'));
+        setTimeout(() => { currentStep = 6; showStep(6); }, 1000);
+      } catch (error) {
+        document.getElementById('progress-status').textContent = 'Error: ' + error;
+        document.querySelectorAll('.progress-fill').forEach(b => b.style.background = 'var(--color-error)');
       }
+    }
 
-      step();
+    // Listen for progress events from Rust backend
+    if (window.__TAURI__) {
+      window.__TAURI__.event.listen('install-progress', (event) => {
+        const { phase, progress, message } = event.payload;
+        document.getElementById('progress-status').textContent = message;
+
+        if (phase === 'download') {
+          document.getElementById('dl-bar').style.width = progress + '%';
+          document.getElementById('dl-pct').textContent = Math.round(progress) + '%';
+        } else if (phase === 'extract') {
+          document.getElementById('dl-bar').style.width = '100%';
+          document.getElementById('dl-pct').textContent = '100%';
+          document.getElementById('ex-bar').style.width = progress + '%';
+          document.getElementById('ex-pct').textContent = Math.round(progress) + '%';
+        } else if (phase === 'install') {
+          document.getElementById('dl-bar').style.width = '100%';
+          document.getElementById('ex-bar').style.width = '100%';
+          document.getElementById('in-bar').style.width = progress + '%';
+          document.getElementById('in-pct').textContent = Math.round(progress) + '%';
+        }
+      });
     }
 
     function retryInstall() {
