@@ -1,125 +1,60 @@
-# wot-setup — AGENTS.md
+# WayOfTeams Desktop
 
-WayOfTeams Desktop Installer (bootstrapper).
+One platform for your entire engineering team.
 
-## Purpose
+## Quick Links
 
-Small (~3MB) bootstrapper installer that guides users through a 6-step installation wizard. Downloads the full WayOfTeams app (200-400MB) from GitHub Releases and installs it on Windows, macOS, or Linux.
+| | |
+|--|--|
+| **Download** | [teams.zerwiz.org/download](https://teams.zerwiz.org/download) |
+| **Documentation** | [teams.zerwiz.org/documentation](https://teams.zerwiz.org/documentation) |
+| **GitHub** | [github.com/Way-Of/wot-setup](https://github.com/Way-Of/wot-setup) |
 
-## Stack
+## What It Does
 
-| Component | Version |
-|-----------|---------|
-| Rust | 1.98 |
-| Tauri | 2.x |
-| reqwest | 0.12 |
-| tokio | 1.x |
-| zip | 2.x |
+WayOfTeams brings your entire engineering workflow into one place:
 
-## Repository Structure
-
-```
-wot-setup/
-├── src-tauri/              # Tauri Rust app
-│   ├── Cargo.toml          # Rust dependencies
-│   ├── tauri.conf.json     # Tauri config (window, bundle, security)
-│   ├── build.rs            # Tauri build script
-│   ├── src/
-│   │   └── main.rs         # Rust entry point + Tauri commands
-│   ├── icons/              # App icons (32x32, 128x128, .ico, .icns)
-│   └── resources/          # Bundled resources
-├── index.html              # Standalone installer wizard UI (preview)
-├── dist/                   # Built frontend assets
-├── docs/
-│   └── legal/              # License documents
-│       ├── EULA.md
-│       ├── Terms-of-Service.md
-│       └── Privacy-Policy.md
-├── LICENSE                 # MIT License
-├── README.md               # Project documentation
-├── AGENTS.md               # This file
-└── package.json            # Node.js config (electron-builder fallback)
-```
-
-## Distribution Strategy
-
-| Asset | Location |
-|-------|----------|
-| Bootstrapper installer | `teams.zerwiz.org/download` (served from server) |
-| Full app binaries | `github.com/Way-Of/wayofteams-releases` (public repo) |
-| Auto-update manifest | `github.com/Way-Of/wayofteams-releases/releases/latest` |
-
-**Flow:**
-1. User visits `teams.zerwiz.org/download`
-2. Downloads bootstrapper (~3MB)
-3. Bootstrapper pulls full app from `github.com/Way-Of/wayofteams-releases`
-4. Installs to platform-specific location
-
-## Installer Flow (6 Steps)
-
-| Step | Screen | User Action |
-|------|--------|-------------|
-| 1 | Welcome | Click Next |
-| 2 | License Agreement | Accept + Next |
-| 3 | Install Location | Browse or Default + Next |
-| 4 | Optional Components | Check/uncheck + Next |
-| 5 | Download & Install | Wait |
-| 6 | Complete | Finish (launch option) |
+- **Tickets & Standups** — Track work, run async standups, keep delivery visible
+- **Kanban Boards** — Visual project management with drag-and-drop
+- **AI Chat** — Built-in AI assistant using local models or cloud providers
+- **Agent Workflows** — Jido-powered agents automate backlog grooming, reviews, and releases
+- **MCP Server** — 223+ tools that work with OpenCode, Claude Code, Codex, Cursor, and more
+- **Anchor Memory** — Persistent knowledge base that remembers across sessions
+- **OpenChamber** — Browser-based AI coding workspace
 
 ## System Requirements
 
-| OS | Minimum | Recommended |
-|----|---------|-------------|
-| Windows | Windows 10 (1903+) | Windows 11 |
-| macOS | macOS 12 (Monterey) | Latest |
-| Linux | Ubuntu 20.04+ / Debian 11+ | Latest |
-| RAM | 4GB | 8GB |
-| Disk | 1GB | 2GB |
+| | Minimum | Recommended |
+|--|---------|-------------|
+| **OS** | Windows 10+ / macOS 12+ / Ubuntu 20.04+ | Latest |
+| **RAM** | 4 GB | 8 GB |
+| **Disk** | 1 GB | 2 GB |
 
-## Key Commands
+## Installation
 
-```bash
-# Preview installer in browser
-open index.html
+1. Go to [teams.zerwiz.org/download](https://teams.zerwiz.org/download)
+2. Click the download button for your operating system
+3. Run the installer and follow the 6-step wizard
+4. Launch WayOfTeams
 
-# Build Tauri app
-cargo tauri build
+## Offline Mode
 
-# Dev mode
-cargo tauri dev
-```
+WayOfTeams works fully offline. All your data stays on your computer.
 
-## Build Artifacts
+## Updates
 
-| Platform | Output |
-|----------|--------|
-| Windows | `WayOfTeams-Setup.exe` (NSIS) |
-| macOS | `WayOfTeams.dmg` |
-| Linux | `WayOfTeams.AppImage` |
+The app checks for updates automatically. You can also check from Settings → Check for Updates.
 
-## WayOfTeams Colors
+## Support
 
-```css
---color-primary: #FF6B35;
---color-bg: #1A1A1A;
---color-surface: #222222;
---color-surface-elevated: #2A2A2A;
---color-border: #333333;
---color-border-strong: #444444;
---color-text-primary: #FFFFFF;
---color-text-secondary: #AAAAAA;
---color-text-muted: #666666;
---color-success: #22C55E;
---color-warning: #F59E0B;
---color-info: #3B82F6;
-```
+- Documentation: [teams.zerwiz.org/documentation](https://teams.zerwiz.org/documentation)
+- Issues: [github.com/Way-Of/wot-setup/issues](https://github.com/Way-Of/wot-setup/issues)
+- Email: support@wayofteams.com
 
-Font: Geist (Google Fonts)
+## Legal
 
-## Related Repos
+- [Terms of Service](docs/legal/Terms-of-Service.md)
+- [Privacy Policy](docs/legal/Privacy-Policy.md)
+- [EULA](docs/legal/EULA.md)
 
-| Repo | Visibility | Purpose |
-|------|-----------|---------|
-| `Way-Of/wayofteams` | Private | Main app code |
-| `Way-Of/wayofteams-releases` | Public | Desktop app binaries + auto-update |
-| `Way-Of/wot-setup` | Public | This installer repo |
+© 2026 Way-Of. All rights reserved.
