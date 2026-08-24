@@ -51,7 +51,6 @@ jobs:
         run: npm run tauri -- --version || npx tauri --version
 
       - name: Build Tauri app
-        working-directory: src-tauri
         run: npx tauri build --target ${{ matrix.target }}
 
       - name: Upload Linux artifacts
