@@ -1,5 +1,5 @@
 target/
 dist/
-*.log
 node_modules/
+*.log
 .DS_Store

@@ -1,0 +1,10 @@
+{
+  "name": "wayofteams-desktop",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "tauri": "tauri",
+    "build": "cargo tauri build",
+    "dev": "cargo tauri dev"
+  }
+}
